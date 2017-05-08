@@ -1,0 +1,10 @@
+{
+  "name": "immutable-deep-update",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "author": "Gabriel Vergnaud",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.4"
+  }
+}
