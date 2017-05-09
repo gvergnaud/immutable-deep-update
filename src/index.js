@@ -3,6 +3,7 @@ const {
   composeLenses,
   identityLens,
   lensProp,
+  num,
   mapped,
   mappedValues,
   over: _over,
@@ -10,9 +11,10 @@ const {
   view: _view
 } = require('./lens')
 
-// Token :: Prop String | Mapped | MappedValues
+// Token :: Prop String | Num number | Mapped | MappedValues
 const Token = {
   Prop: 'Prop',
+  Num: 'Num',
   Mapped: 'Mapped',
   MappedValues: 'MappedValues',
 }
@@ -33,7 +35,9 @@ const tokenize = str => {
         return { type: Token.Mapped }
       } else if (strFragment.match(/^\[([0-9]*)\]$/)) {
         const [_, value] = strFragment.match(/^\[([0-9]*)\]$/)
-        return { type: Token.Prop, value }
+        return { type: Token.Num, value: parseInt(value) }
+      } else if (parseInt(strFragment) == strFragment) {
+        return { type: Token.Num, value: parseInt(strFragment) }
       } else {
         return { type: Token.Prop, value: strFragment }
       }
@@ -46,6 +50,7 @@ const parse = tokens =>
     switch (token.type) {
       case Token.MappedValues: return composeLenses(acc, mappedValues)
       case Token.Mapped: return composeLenses(acc, mapped)
+      case Token.Num: return composeLenses(acc, num(token.value))
       case Token.Prop: return composeLenses(acc, lensProp(token.value))
       default: throw new Error(`Token with type ${token.type} is not supported`)
     }

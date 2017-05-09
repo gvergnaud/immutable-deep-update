@@ -15,7 +15,9 @@ const user = {
   ]
 }
 
-over('friends[0].location.city', city => city + ' City', user)
+console.log(
+  over('friends[0].location.city', city => city + ' City', user)
+)
 /* =>  {
   firstname: 'Han',
   location: { city: 'Paris' }
@@ -25,10 +27,12 @@ over('friends[0].location.city', city => city + ' City', user)
   ]
 } */
 
-over('friends', friends => friends.concat({
-  firstname: 'Chewi',
-  location: { city: '?' }
-}), user)
+console.log(
+  over('friends', friends => friends.concat({
+    firstname: 'Chewi',
+    location: { city: '?' }
+  }), user)
+)
 /* =>  {
   firstname: 'Han',
   location: { city: 'Paris' }
@@ -43,10 +47,14 @@ over('friends', friends => friends.concat({
 ### Map over array values
 ```js
 
-view('friends[..].location.city', user)
+console.log(
+  view('friends[..].location.city', user)
+)
 // => [ 'New York', 'Dark star' ]
 
-set('friends[..].location.city', 'Tokyo', user)
+console.log(
+  set('friends[..].location.city', 'Tokyo', user)
+)
 /* =>  {
   firstname: 'Han',
   location: { city: 'Paris' }
@@ -66,10 +74,14 @@ const state = {
   }
 }
 
-view('usersById{..}.firstname', state)
+console.log(
+  view('usersById{..}.firstname', state)
+)
 // => { a: 'Rick', b: 'Morty' }
 
-over('usersById{..}', user => `${user.firstname} - ${user.id}`, state)
+console.log(
+  over('usersById{..}', user => `${user.firstname} - ${user.id}`, state)
+)
 // => { usersById: { a: 'Rick - a', b: 'Morty - b' } }
 ```
 
@@ -80,8 +92,4 @@ over('usersById{..}', user => `${user.firstname} - ${user.id}`, state)
 - `'{..}'` => map over all values of an object
 
 ### Roadmap
-- Add support for ranges
-  - `'[x..y]'` => range from x to y
-  - `'[x..]'` => range from x to Infinity
-- Test coverage
 - Nice error handling

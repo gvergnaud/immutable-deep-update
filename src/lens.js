@@ -61,7 +61,7 @@ const immutableLens = createLens(
 // immutableLens :: (DataStructure [s], Functor f) => number -> _ -> _ -> f -> s number a -> f (s number b)
 const num = createLens(
   (index, arr) => arr[index],
-  (index, value, arr) => [ ...arr.split(0, index), value, ...arr.split(index + 1) ]
+  (index, value, arr) => [ ...arr.slice(0, index), value, ...arr.slice(index + 1) ]
 )
 
 // mapped :: (DataStructure [s], Functor f) => (c -> f c) -> (f d -> d) -> (a -> f b) -> s k a -> f (s k b)
