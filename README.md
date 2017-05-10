@@ -86,8 +86,13 @@ console.log(
 ```
 
 ## Supported path
+- `'azerty'` => prop 'azerty'
 - `'aze.rty'` => compose (prop 'aze') (prop 'rty')
-- `'aze[0].aze'` => compose (prop 'aze') (prop '0') (prop 'rty')
+- `'aze['rty']'` => compose (prop 'aze') (prop 'rty')
+- `'0'` => index 0
+- `'[0]'` => index 0
+- `'aze[0].rty'` => compose (prop 'aze') (index 0) (prop 'rty')
+- `'aze.0.rty'` => compose (prop 'aze') (index 0) (prop 'rty')
 - `'[..]'` => map over all the items of an array
 - `'{..}'` => map over all values of an object
 

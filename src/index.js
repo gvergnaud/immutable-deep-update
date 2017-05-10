@@ -19,28 +19,38 @@ const Token = {
   MappedValues: 'MappedValues',
 }
 
+
+const quotesRegexp = /(^('|")|('|")$)/g
+const curlyBracketsRegexp = /\{[^\}]*\}/g
+const squareBracketsRegexp = /\[[^\]]*\]/g
+const objectPropertyRegexp = /(\.|^)(?:[a-z0-9])/gi
+const squareBracketsPropertyRegexp = /^\[(?:"|')([^\]]+)(?:"|')\]$/
+const squareBracketsIndexRegexp = /^\[([0-9]*)\]$/
+
 // tokenize :: String -> [Token]
 const tokenize = str => {
-  const tokenSeparator = '\\\\\\'
+  const separator = '\\\\\\'
   return str
-    .replace(/\{[^\}]*\}/g, x => `${tokenSeparator}${x}${tokenSeparator}`) // for {..}
-    .replace(/\[[^\]]*\]/g, x => `${tokenSeparator}${x}${tokenSeparator}`) // for [..]
-    .replace(/(\.|^)(?:[a-z0-9])/gi, x => `${tokenSeparator}${x.replace('.', '')}`) // for `something.other`
-    .split(tokenSeparator)
+    .replace(curlyBracketsRegexp, x => `${separator}${x}${separator}`) // for {..}
+    .replace(squareBracketsRegexp, x => `${separator}${x}${separator}`) // for [..]
+    .replace(objectPropertyRegexp, x => `${separator}${x.replace('.', '')}`) // for `something.other`
+    .split(separator)
     .filter(Boolean)
     .map(strFragment => {
-      if (strFragment === '{..}') {
-        return { type: Token.MappedValues }
-      } else if (strFragment === '[..]') {
-        return { type: Token.Mapped }
-      } else if (strFragment.match(/^\[([0-9]*)\]$/)) {
-        const [_, value] = strFragment.match(/^\[([0-9]*)\]$/)
-        return { type: Token.Num, value: parseInt(value) }
-      } else if (parseInt(strFragment) == strFragment) {
-        return { type: Token.Num, value: parseInt(strFragment) }
-      } else {
-        return { type: Token.Prop, value: strFragment }
-      }
+      if (strFragment === '{..}') return { type: Token.MappedValues }
+
+      if (strFragment === '[..]') return { type: Token.Mapped }
+
+      const [_, value] = (strFragment.match(squareBracketsIndexRegexp) || [])
+      if (value) return { type: Token.Num, value: parseInt(value) }
+
+      const intValue = parseInt(strFragment)
+      if (intValue == strFragment) return { type: Token.Num, value: intValue }
+
+      const [__, propertyName] = (strFragment.match(squareBracketsPropertyRegexp) || [])
+      if (propertyName) return { type: Token.Prop, value: propertyName.replace(quotesRegexp, '') }
+
+      return { type: Token.Prop, value: strFragment }
     })
 }
 

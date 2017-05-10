@@ -120,6 +120,24 @@ describe('Immutable Deep Update', () => {
 
   })
 
+  it('should work when accessing properties with the [\'propertyName\'] syntax', () => {
+
+    expect(view('location["city"]', user)).toEqual('Paris')
+
+    expect(over('location[\'city\']', x => 'Le bon ' + x, user)).toEqual(Object.assign({}, user, {
+      location: Object.assign({}, user.location, {
+        city: 'Le bon Paris'
+      })
+    }))
+
+    expect(set('location["city"]', 'wooooot', user)).toEqual(Object.assign({}, user, {
+      location: Object.assign({}, user.location, {
+        city: 'wooooot'
+      })
+    }))
+
+  })
+
   it('should understand `xxx[0].yyy` syntax to access an index', () => {
 
     expect(view('friends[0].location.city', user)).toBe('New York')
