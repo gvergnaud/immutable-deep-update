@@ -88,7 +88,7 @@ console.log(
 ## Supported path
 - `'azerty'` => prop 'azerty'
 - `'aze.rty'` => compose (prop 'aze') (prop 'rty')
-- `'aze['rty']'` => compose (prop 'aze') (prop 'rty')
+- `'aze["rty"]'` => compose (prop 'aze') (prop 'rty')
 - `'0'` => index 0
 - `'[0]'` => index 0
 - `'aze[0].rty'` => compose (prop 'aze') (index 0) (prop 'rty')

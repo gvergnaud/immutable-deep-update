@@ -9,6 +9,8 @@ const mapValues = curry((mapper, obj) =>
     [k]: mapper(obj[k], k, obj)
   }), {}))
 
+const setAtIndex = (index, value, arr) => [ ...arr.slice(0, index), value, ...arr.slice(index + 1) ]
+
 const composeLenses = (...lenses) => curry((point, extract, x) =>
   lenses.map(l => l(point, extract)).reduceRight((acc, l) => l(acc), x))
 
@@ -29,8 +31,7 @@ const composeLenses = (...lenses) => curry((point, extract, x) =>
   // -> s k a
   // -> f (s k b)
 const createLens = curry((getter, setter, key, point, extract, f, obj) =>
-  map(value => setter(key, value, obj), f(getter(key, obj)))
-)
+  map(value => setter(key, value, obj), f(getter(key, obj))))
 
 // identityLens :: (DataStructure s, Functor f) => _ -> _ -> f -> s k a -> f (s k b)
 const identityLens = createLens(
@@ -43,13 +44,14 @@ const identityLens = createLens(
 // lensProp :: (DataStructure (Object s), Functor f) => String -> _ -> _ -> f -> s String a -> f (s String b)
 const lensProp = createLens(
   (key, obj) => obj[key],
-  (key, value, obj) => Object.assign({}, obj, {
-    [key]: value
-  })
+  (key, value, obj) => Array.isArray(obj)
+    ? setAtIndex(key, value, obj)
+    : Object.assign({}, obj, { [key]: value })
 )
 
 // lensProps :: (DataStructure (Object s), Functor f) => [String] -> _ -> _ -> f -> s String a -> f (s String b)
-const lensProps = (...keys) => composeLenses(...keys.map(key => lensProp(key)))
+const lensProps = (...keys) =>
+  composeLenses(...keys.map(key => lensProp(key)))
 
 
 // immutableLens :: (DataStructure (Immutable s), Functor f) => String -> _ -> _ -> f -> s String a -> f (s String b)
@@ -61,14 +63,16 @@ const immutableLens = createLens(
 // immutableLens :: (DataStructure [s], Functor f) => number -> _ -> _ -> f -> s number a -> f (s number b)
 const num = createLens(
   (index, arr) => arr[index],
-  (index, value, arr) => [ ...arr.slice(0, index), value, ...arr.slice(index + 1) ]
+  setAtIndex
 )
 
 // mapped :: (DataStructure [s], Functor f) => (c -> f c) -> (f d -> d) -> (a -> f b) -> s k a -> f (s k b)
-const mapped = curry((point, extract, f, xs) => point(map(compose(extract, f), xs)))
+const mapped = curry((point, extract, f, xs) =>
+  point(map(compose(extract, f), xs)))
 
 // mapped :: (DataStructure (Object s), Functor f) => (c -> f c) -> (f d -> d) -> (a -> f b) -> s k a -> f (s k b)
-const mappedValues = curry((point, extract, f, obj) => point(mapValues(compose(extract, f), obj)))
+const mappedValues = curry((point, extract, f, obj) =>
+  point(mapValues(compose(extract, f), obj)))
 
 
 /* ----------------------------------------- *
@@ -79,13 +83,16 @@ const mappedValues = curry((point, extract, f, obj) => point(mapValues(compose(e
 // Lens s k = Lens of a structure with accessors of type k
 
 // view :: Lens s k -> s k a -> a
-const view = curry((lens, x) => compose(getConst, lens(Const.of, getConst, Const.of))(x))
+const view = curry((lens, x) =>
+  compose(getConst, lens(Const.of, getConst, Const.of))(x))
 
 // over :: Lens s k -> (a -> b) -> s k a -> s k b
-const over = curry((lens, f, x) => compose(runIdentity, lens(Identity.of, runIdentity, compose(Identity.of, f)))(x))
+const over = curry((lens, f, x) =>
+  compose(runIdentity, lens(Identity.of, runIdentity, compose(Identity.of, f)))(x))
 
 // set :: Lens s k -> b -> s k a -> s k b
-const set = curry((lens, v, x) => over(lens, () => v, x))
+const set = curry((lens, v, x) =>
+  over(lens, () => v, x))
 
 
 

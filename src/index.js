@@ -44,9 +44,6 @@ const tokenize = str => {
       const [_, value] = (strFragment.match(squareBracketsIndexRegexp) || [])
       if (value) return { type: Token.Num, value: parseInt(value) }
 
-      const intValue = parseInt(strFragment)
-      if (intValue == strFragment) return { type: Token.Num, value: intValue }
-
       const [__, propertyName] = (strFragment.match(squareBracketsPropertyRegexp) || [])
       if (propertyName) return { type: Token.Prop, value: propertyName.replace(quotesRegexp, '') }
 

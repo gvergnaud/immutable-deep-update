@@ -138,6 +138,20 @@ describe('Immutable Deep Update', () => {
 
   })
 
+  it('should understand `xxx.0.yyy` syntax to access an index or a property in function of the type', () => {
+    expect(over('friends.0.location.city', city => city + ' City', user)).toEqual({
+      firstname: 'Han',
+      location: { city: 'Paris' },
+      friends: [
+        { fisrtname: 'Luke', location: { city: 'New York City' } },
+        { fisrtname: 'Darth Vador', location: { city: 'Dark star' } }
+      ]
+    })
+
+    const obj = { prop: { '123': { name: 'lol' } } }
+    expect(set('prop.123.name', 'Gab', obj)).toEqual({ prop: { '123': { name: 'Gab' } } })
+  })
+
   it('should understand `xxx[0].yyy` syntax to access an index', () => {
 
     expect(view('friends[0].location.city', user)).toBe('New York')

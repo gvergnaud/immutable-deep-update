@@ -1,18 +1,18 @@
 {
   "name": "immutable-deep-update",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/index.js",
   "author": "Gabriel Vergnaud",
   "license": "MIT",
   "scripts": {
-      "start": "node examples/index.js",
-      "test": "mocha"
+    "start": "node examples/index.js",
+    "test": "mocha"
   },
   "dependencies": {
     "lodash": "^4.17.4"
   },
   "devDependencies": {
     "expect": "^1.20.2",
-    "mocha": "^3.3.0"
+    "mocha": "^3.4.1"
   }
 }
