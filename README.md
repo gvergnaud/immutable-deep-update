@@ -42,21 +42,27 @@ import { over, set, view } from 'immutable-deep-update'
 ### set(path, value, dataStructure): dataStructure
 ```js
 const state = { location: { city: 'NYC' }, /* other properties */ }
+
 const newState = set('location.city', 'Paris', state)
+
 // newState === { location: { city: 'Paris' }, /* other properties */ }
 ```
 
 ### over(path, transformer, dataStructure): dataStructure
 ```js
 const state = { counter: { count: 1 }, /* other properties */ }
+
 const newState = over('counter.count', x => x + 1, state)
+
 // newState === { counter: { count: 2 }, /* other properties */ }
 ```
 
 ### view(path, dataStructure): value
 ```js
 const state = { users: [ { location: { city: 'NYC' } }, { location: { city: 'Paris' } } ] }
+
 const cities = view('users[..].location.city', state)
+
 // cities === ['NYC', 'Paris']
 ```
 
